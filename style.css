@@ -29,3 +29,40 @@ body {
   font-family: inherit;
   font-size: 16px;
 }
+
+/* Overlay secreto (esconde uma pista) */
+.iris-overlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+  background: rgba(0,0,0,0.0); /* transparente por padrão */
+  transition: background 300ms ease, opacity 300ms ease;
+  opacity: 0;
+}
+
+/* Texto secreto escondido por padrão (mesma cor do fundo para camuflar se quiser) */
+.iris-overlay .secret-text {
+  color: rgba(255,255,255,0); /* invisível por padrão */
+  font-size: 14px;
+  text-align: center;
+  padding: 6px;
+}
+
+/* Quando o atributo data-hidden for "false" (ou via classe), revela a pista */
+.iris-image[data-hidden="false"] .iris-overlay {
+  background: rgba(0,0,0,0.45);
+  opacity: 1;
+}
+.iris-image[data-hidden="false"] .iris-overlay .secret-text {
+  color: #fff;
+}
+
+/* estilo para links quebrados, só por vibe 90s */
+.broken-link {
+  color: #00f;
+  text-decoration: underline;
+  font-weight: bold;
+}

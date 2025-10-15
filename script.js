@@ -50,3 +50,31 @@ userInput.addEventListener("keydown", async (e) => {
     }
   }
 });
+// Ex.: revelar a pista quando o usuário clicar 3x na imagem
+(function(){
+  const fig = document.getElementById('iris-image-1');
+  const img = document.getElementById('iris-img-1');
+  let clicks = 0;
+
+  img.addEventListener('click', () => {
+    clicks++;
+    // clique triplo pra ativar (ajusta como quiser)
+    if (clicks >= 3) {
+      const hidden = fig.getAttribute('data-hidden') === 'true';
+      fig.setAttribute('data-hidden', hidden ? 'false' : 'true');
+      // opcional: mostra a mensagem do data-clue no console (útil pra debug/puzzle)
+      console.log('clue:', fig.dataset.clue);
+      clicks = 0;
+    }
+    // reseta contagem se o usuário demorar muito
+    setTimeout(() => clicks = 0, 700);
+  });
+
+  // função utilitária pra trocar a imagem via JS (se quiser ativar por puzzle)
+  window.irisReplaceImage = function(id, newSrc, newAlt = '') {
+    const el = document.getElementById(id);
+    if (!el) return;
+    el.src = newSrc;
+    if (newAlt) el.alt = newAlt;
+  };
+})();
