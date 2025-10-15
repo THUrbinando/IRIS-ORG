@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <title>IRIS Bazaar — D-552 Market</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <style>
+    body {
+      background:#ffffff;
+      color:#000;
+      font-family:Arial,Helvetica,sans-serif;
+      margin:18px;
+    }
+    header h1 {
+      color:#900;
+      margin:0;
+      font-size:28px;
+      text-shadow:1px 1px 0 #f00;
+    }
+    .menu {
+      margin:8px 0;
+      color:#000;
+    }
+    .menu a {
+      color:#000;
+      text-decoration:none;
+      margin-right:8px;
+    }
+    hr {
+      border:none;
+      border-top:1px solid #ddd;
+      margin:14px 0;
+    }
+    .hero {
+      display:flex;
+      gap:18px;
+      align-items:center;
+    }
+    .placeholder-large {
+      width:420px;
+      height:260px;
+      background:#eee;
+      border:2px dashed #ccc;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      font-weight:bold;
+      color:#666;
+    }
+    .desc {
+      max-width:520px;
+    }
+    .products {
+      display:flex;
+      flex-wrap:wrap;
+      gap:12px;
+      margin-top:14px;
+    }
+    .card {
+      width:240px;
+      border:1px solid #ddd;
+      padding:10px;
+      background:#fafafa;
+      cursor:pointer;
+    }
+    .card img {
+      width:100%;
+      height:140px;
+      object-fit:cover;
+      background:#ddd;
+    }
+    .price {
+      font-weight:bold;
+      color:#900;
+    }
+    .btn {
+      display:inline-block;
+      padding:6px 10px;
+      background:#900;
+      color:#fff;
+      border:none;
+      cursor:pointer;
+      margin-top:8px;
+      text-decoration:none;
+    }
+    .note {
+      font-size:12px;
+      color:#555;
+      margin-top:8px;
+    }
+    .secret-badge {
+      display:inline-block;
+      padding:2px 6px;
+      background:#000;
+      color:#fff;
+      font-size:11px;
+      margin-left:6px;
+    }
+    footer {
+      margin-top:20px;
+      border-top:1px solid #ddd;
+      padding-top:10px;
+      font-size:13px;
+    }
+    audio {
+      margin-top: 8px;
+    }
+    @media (max-width:700px){
+      .hero{flex-direction:column;}
+      .placeholder-large{width:100%;}
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <h1>&gt;&lt;0&gt;&lt; IRIS Bazaar — Mercado do D-552</h1>
+  <div class="menu">
+    <a href="iris.html">Início</a> |
+    <a href="sobre.html">Sobre</a> |
+    <a href="pesquisa.html">Pesquisa Médica</a> |
+    <a href="contato.html">Contato</a> |
+    <a href="protoshop.html">Bazaar</a>
+  </div>
+</header>
+
+<hr>
+
+<section class="hero">
+  <div class="placeholder-large" id="banner">
+    <img src="thurbiAI.png" alt="o rosto do vendedor" width="100%" height="100%"> 
+  </div>
+
+  <div class="desc">
+    <p><strong>D-552 (o_THUrbi)</strong> — Protótipo de arte IA. Vendo <em>prints</em>, <em>pacotes digitais</em> e <em>shares</em> de mineração (tempo de hash).</p>
+    <p class="note">* Site criado sem autorização da IRIS. Preços e disponibilidade controlados pelo protótipo. Nem a IRIS sabe disso... ainda. h3h3h3</p>
+  </div>
+</section>
+
+<hr>
+
+<section>
+  <h2>Amostra de Som</h2>
+  <audio controls>
+    <source src="dreams.wav" type="audio/mpeg">
+    Seu navegador não suporta áudio.
+  </audio>
+</section>
+
+<hr>
+
+<section>
+  <h2>Produtos Disponíveis</h2>
+  <div class="products">
+
+    <div class="card" data-page="produto1.html">
+      <img src="campos.png" alt="Print D-552">
+      <h3>Print — "Paisagem da Superfície"</h3>
+      <p class="price">Preço: 0.001 R$ <span class="secret-badge">digital</span></p>
+      <button class="btn">Ver Detalhes</button>
+      <p class="note">Arquivo PNG 4096×4096 — gerado pelo D-552 durante o 'dia de desenho'.</p>
+    </div>
+
+    <div class="card" data-page="produto2.html">
+      <img src="Liberdade.gif" alt="Pack D-552">
+      <h3>ArtPack — "Sketches do Subsolo"</h3>
+      <p class="price">Preço: 0.003 R$</p>
+      <button class="btn">Ver Detalhes</button>
+      <p class="note">Contém 12 sketches + meta-dados (timestamps de criação).</p>
+    </div>
+
+    <div class="card" data-page="produto3.html">
+      <img src="bitcoin.png" alt="Mining Share">
+      <h3>Share de Mineração — 6h</h3>
+      <p class="price">Preço: 0.0005 R$</p>
+      <button class="btn">Ver Detalhes</button>
+      <p class="note">Você adquire 'tempo de hash' alocado no D-552. Uso experimental.</p>
+    </div>
+
+    <div class="card" data-page="produto4.html" id="secret-card" style="display:none; background:#fee">
+      <img src="placeholder_secret.jpg" alt="Secret Piece">
+      <h3>Arquivo Privado — "Registro do Criador"</h3>
+      <p class="price">Preço: ???</p>
+      <button class="btn">Ver Detalhes</button>
+      <p class="note">Conteúdo sensível — desbloqueado apenas com código secreto.</p>
+    </div>
+
+  </div>
+</section>
+
+<hr>
+
+<footer>
+  <p>© 1974–20██ IRIS Corporation — Todos os direitos reservados</p>
+  <p><a href="#">Termos de uso</a> | <a href="#">Política de privacidade</a></p>
+</footer>
+
+<script>
+  // redireciona ao clicar no card ou botão
+  document.querySelectorAll('.card').forEach(card => {
+    const page = card.getAttribute('data-page');
+    card.addEventListener('click', () => {
+      window.location.href = page;
+    });
+    card.querySelector('.btn').addEventListener('click', (e) => {
+      e.stopPropagation();
+      window.location.href = page;
+    });
+  });
+</script>
+</body>
+</html>
