@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Have you ever wondered what do you see when it gets darker than dark?</title>
+<style>
+@font-face {
+  font-family: '8bitOperatorPlus-Bold';
+  src: url('8bitOperatorPlus-Bold.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+}
+html, body {
+  height:100%; margin:0;
+  background:#000;
+  font-family: '8bitOperatorPlus-Bold', monospace;
+  color:#fff;
+  overflow:hidden;
+}
+canvas#gameCanvas {
+  position:absolute;
+  top:0; left:0;
+  width:100%;
+  height:100%;
+  display:block;
+}
+#dialogBox {
+  position:absolute;
+  bottom:50px;
+  left:50%;
+  transform:translateX(-50%);
+  background: rgba(0,0,0,0.8);
+  border:2px solid #ffb3b3;
+  padding:20px;
+  width:400px;
+  max-width:90%;
+  color:#fff;
+  display:none;
+  z-index:20;
+  text-align:center;
+  font-size:16px;
+  font-family: '8bitOperatorPlus-Bold', monospace;
+}
+</style>
+</head>
+<body>
+<audio id="bgMusic" loop>
+  <source src="0.mp3" type="audio/mpeg">
+</audio>
+<div id="dialogBox"></div>
+<canvas id="gameCanvas"></canvas>
+<script>
+(() => {
+  if(localStorage.getItem('florestaBloqueada') === 'true'){
+    alert('Você não pode acessar esta página.');
+    window.location.href = 'NyanChael.html';
+  }
+  const dialog = document.getElementById('dialogBox');
+  const canvas = document.getElementById('gameCanvas');
+  const ctx = canvas.getContext('2d');
+  const music = document.getElementById('bgMusic');
+  const ASSETS = { bg:null, obj:null, player:{ up:[], down:[], left:[], right:[] } };
+  const player = { x:0, y:0, w:32, h:32, speed:3.5, dir:'down', frame:0, animTime:0 };
+  const keys = {};
+  let startedMusic = false, dialogOpen = false, dialogueIndex = 0, currentDialogue = [], typingInterval = null;
+  const obj = { x:0, y:0, w:64, h:64, hitOffsetY:40 };
+  const INTERACT_DISTANCE = 80, objDisplayScale = 3;
+  const assetList = { bg:'bg_darkforest.png', obj:'nothing.gif' };
+
+  function resize(){
+    const dpr = window.devicePixelRatio || 1;
+    const w = window.innerWidth, h = window.innerHeight;
+    canvas.style.width = w+'px';
+    canvas.style.height = h+'px';
+    canvas.width = Math.floor(w*dpr);
+    canvas.height = Math.floor(h*dpr);
+    ctx.setTransform(dpr,0,0,dpr,0,0);
+    obj.x = canvas.width/2 - obj.w/2;
+    obj.y = canvas.height/2 - obj.h/2;
+    player.x = canvas.width/2 - player.w/2;
+    player.y = canvas.height - player.h - 10;
+  }
+  window.addEventListener('resize', resize);
+  resize();
+
+  window.addEventListener('keydown', e => {
+    const k = e.key.toLowerCase();
+    if(dialogOpen){
+      if(typingInterval){ clearInterval(typingInterval); dialog.innerHTML = currentDialogue[dialogueIndex]; typingInterval = null; }
+      else { dialogueIndex++; if(dialogueIndex >= currentDialogue.length){ dialog.style.display = 'none'; dialogOpen = false; } else showNextLine(); }
+      e.preventDefault(); return;
+    }
+    if (['w','a','s','d','arrowup','arrowdown','arrowleft','arrowright'].includes(k)){ e.preventDefault(); keys[k] = true; startMusic(); }
+    if(k === 'enter' || k === 'z'){ if(isNear(player, obj, INTERACT_DISTANCE)){ openDialogue(); e.preventDefault(); } }
+    if(k === 'escape'){ dialog.style.display = 'none'; dialogOpen = false; typingInterval && clearInterval(typingInterval); }
+  });
+  window.addEventListener('keyup', e => keys[e.key.toLowerCase()] = false);
+
+  function startMusic(){ if(!startedMusic){ music.play().catch(()=>{}); startedMusic = true; } }
+
+  function finishDialogue(){
+    localStorage.setItem('florestaBloqueada', 'true');
+    const audioFinal = new Audio('BAD.wav');
+    audioFinal.play().catch(()=>{});
+    setTimeout(() => { window.location.href = 'NyanChael.html'; }, 1500);
+  }
+
+  function showNextLine(){
+    const line = currentDialogue[dialogueIndex];
+    dialog.innerHTML = '';
+    dialog.style.display = 'block';
+    let i = 0;
+    typingInterval && clearInterval(typingInterval);
+    typingInterval = setInterval(()=>{
+      dialog.innerHTML += line[i];
+      i++;
+      if(i >= line.length){
+        clearInterval(typingInterval);
+        typingInterval = null;
+        if(dialogueIndex === currentDialogue.length - 1 && line.includes('dente')) finishDialogue();
+        else if(dialogueIndex === currentDialogue.length - 1){ const outroAudio = new Audio('lost_laugh.mp3'); outroAudio.play().catch(()=>{}); }
+      }
+    }, 30);
+  }
+
+  function openDialogue(){
+    const side = getInteractionSide(player,obj);
+    if(side === 'north'){
+      currentDialogue = [
+        `Você sente o espaço atrás da árvore.`,
+        `Não é árvore, nem chão.`,
+        `A luz respira.`,
+        `Algo se esconde entre cada suspiro.`,
+        `Você ouve a sua própria voz, mas não é você.`,
+        `O tronco dissolve-se e reaparece, sempre diferente.`,
+        `Uma sombra sorri com dentes que não são seus.`,
+        `O tempo se quebra e você está lá, e aqui, e em lugar nenhum.`,
+        `Você sente algo frio tocar sua mão.`,
+        `Você encontrou um dente.`
+      ];
+    } else {
+      currentDialogue = [
+        `A árvore é alta e calma.`,
+        `Suas folhas sussurram ao vento.`,
+        `O tronco é rugoso sob seus dedos.`,
+        `O aroma da madeira preenche o ar.`,
+        `Há algo familiar e tranquilo aqui.`,
+        `Você observa, mas nada mais se move.`
+      ];
+    }
+    dialogueIndex = 0;
+    dialogOpen = true;
+    showNextLine();
+  }
+
+  function loadImage(src){ return new Promise(resolve=>{ const img = new Image(); img.onload = ()=>resolve(img); img.onerror = ()=>resolve(null); img.src = src; }); }
+
+  async function loadAssets(){
+    ASSETS.bg = await loadImage(assetList.bg);
+    ASSETS.obj = await loadImage(assetList.obj);
+    for(const dir of ['up','down','left','right']){
+      for(let i=0;i<4;i++){ const img = await loadImage(`player_${dir}${i}.png`); ASSETS.player[dir].push(img); }
+    }
+  }
+
+  function isNear(a,b,distance){ const bCenterX = b.x + b.w/2, bCenterY = b.y + b.hitOffsetY + b.h/2; const dx = (a.x + a.w/2) - bCenterX, dy = (a.y + a.h/2) - (b.y + b.hitOffsetY + b.h/2); return Math.sqrt(dx*dx + dy*dy) <= distance; }
+
+  function checkCollision(a,b){ const bY = b.y + b.hitOffsetY; return a.x < b.x + b.w && a.x + a.w > b.x && a.y < bY + b.h && a.y + a.h > bY; }
+
+  function getInteractionSide(player, obj){
+    const dx = player.x + player.w/2 - (obj.x + obj.w/2);
+    const dy = player.y + player.h/2 - (obj.y + obj.hitOffsetY + obj.h/2);
+    const absDX = Math.abs(dx), absDY = Math.abs(dy);
+    if(dy < 0 && absDY > absDX) return 'north';
+    if(dy > 0 && absDY > absDX) return 'south';
+    if(dx < 0 && absDX > absDY) return 'west';
+    return 'east';
+  }
+
+  function update(){
+    if(dialogOpen) return;
+    let dx=0, dy=0;
+    if(keys['w']||keys['arrowup']){ dy-=1; player.dir='up'; }
+    if(keys['s']||keys['arrowdown']){ dy+=1; player.dir='down'; }
+    if(keys['a']||keys['arrowleft']){ dx-=1; player.dir='left'; }
+    if(keys['d']||keys['arrowright']){ dx+=1; player.dir='right'; }
+    if(dx!==0 || dy!==0){
+      if(dx!==0 && dy!==0){ dx *= Math.SQRT1_2; dy *= Math.SQRT1_2; }
+      const nx = player.x + dx*player.speed, ny = player.y + dy*player.speed;
+      if(!checkCollision({x:nx, y:player.y, w:player.w, h:player.h}, obj)) player.x = nx;
+      if(!checkCollision({x:player.x, y:ny, w:player.w, h:player.h}, obj)) player.y = ny;
+      player.animTime += 0.15; player.frame = Math.floor(player.animTime)%4;
+    } else { player.animTime = 0; player.frame = 0; }
+  }
+
+  function draw(){
+    const vw = canvas.clientWidth, vh = canvas.clientHeight;
+    if(ASSETS.bg) ctx.drawImage(ASSETS.bg, 0, 0, vw, vh);
+    else ctx.fillStyle='#004400', ctx.fillRect(0,0,vw,vh);
+    const objBaseY = obj.y + obj.hitOffsetY + obj.h;
+    const drawPlayerFirst = player.y + player.h < objBaseY;
+    if(drawPlayerFirst){ drawPlayer(); drawObject(); } else { drawObject(); drawPlayer(); }
+  }
+
+  function drawPlayer(){
+    const pImg = ASSETS.player[player.dir][player.frame];
+    if(pImg) ctx.drawImage(pImg, player.x, player.y, player.w, player.h);
+    else ctx.fillStyle='#b32b2b', ctx.fillRect(player.x, player.y, player.w, player.h);
+  }
+
+  function drawObject(){
+    const drawW = obj.w * objDisplayScale, drawH = obj.h * objDisplayScale;
+    const drawX = obj.x + obj.w/2 - drawW/2, drawY = obj.y + obj.h/2 - drawH/2;
+    if(ASSETS.obj) ctx.drawImage(ASSETS.obj, drawX, drawY, drawW, drawH);
+    else ctx.fillStyle='#ff0', ctx.fillRect(drawX, drawY, drawW, drawH);
+  }
+
+  function loop(){ update(); draw(); requestAnimationFrame(loop); }
+
+  (async()=>{ await loadAssets(); loop(); })();
+})();
+</script>
+</body>
+</html>

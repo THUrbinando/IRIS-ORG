@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>This Forest...</title>
+<style>
+html,body{
+  height:100%; margin:0;
+  background:#000;
+  font-family: Arial, Helvetica, sans-serif;
+  color:#fff;
+  overflow:hidden;
+}
+canvas#gameCanvas{
+  position:absolute;
+  top:0; left:0;
+  width:100%;
+  height:100%;
+  z-index:0;
+  display:block;
+}
+</style>
+</head>
+<body>
+<audio id="bgMusic" loop>
+  <source src="Lost Boy.mp3" type="audio/mpeg">
+</audio>
+<canvas id="gameCanvas"></canvas>
+<script>
+(() => {
+  if(localStorage.getItem('florestaBloqueada') === 'true'){
+    alert('Você não pode acessar esta página.');
+    window.location.href = 'NyanChael.html';
+  }
+
+  const canvas = document.getElementById('gameCanvas');
+  const ctx = canvas.getContext('2d');
+  const music = document.getElementById('bgMusic');
+  const TREE_SIZE = 64;
+  const TREE_DENSITY = 1000;
+  const FRAMES_PER_DIR = 4;
+
+  let trees = [];
+  let ASSETS = { player:{ up:[], down:[], left:[], right:[] }, bg:null, tree:null };
+  const player = { x:0, y:0, w:32, h:32, speed:3.5, dir:'down', frame:0, animTime:0 };
+  const keys = {};
+  let darkness = 0;
+  let startedMusic = false;
+  let darknessDelay = 1800;
+
+  const assetList = { bg:'bg_lightforest.png', tree:'tree.png' };
+
+  function resize(){
+    const dpr = window.devicePixelRatio || 1;
+    const w = window.innerWidth;
+    const h = window.innerHeight;
+    canvas.style.width = w+'px';
+    canvas.style.height = h+'px';
+    canvas.width = Math.floor(w*dpr);
+    canvas.height = Math.floor(h*dpr);
+    ctx.setTransform(dpr,0,0,dpr,0,0);
+  }
+  window.addEventListener('resize', resize);
+  resize();
+
+  window.addEventListener('keydown', e => {
+    const k = e.key.toLowerCase();
+    if (['w','a','s','d','arrowup','arrowdown','arrowleft','arrowright'].includes(k)) {
+      e.preventDefault();
+      keys[k] = true;
+      startMusic();
+    }
+  });
+  window.addEventListener('keyup', e => keys[e.key.toLowerCase()] = false);
+
+  function startMusic(){
+    if(!startedMusic){
+      music.play().catch(()=>{});
+      startedMusic = true;
+    }
+  }
+
+  function loadImage(src){ return new Promise(resolve => {
+    const img = new Image();
+    img.onload = ()=>resolve(img);
+    img.onerror = ()=>resolve(null);
+    img.src = src;
+  });}
+
+  async function loadAssets(){
+    ASSETS.bg = await loadImage(assetList.bg);
+    ASSETS.tree = await loadImage(assetList.tree);
+    for(const dir of ['up','down','left','right']){
+      for(let i=0;i<FRAMES_PER_DIR;i++){
+        const img = await loadImage(`player_${dir}${i}.png`);
+        ASSETS.player[dir].push(img);
+      }
+    }
+  }
+
+  function populateTrees(){
+    trees = [];
+    for(let i=0;i<TREE_DENSITY;i++){
+      const x = (Math.random()-0.5)*4000;
+      const y = (Math.random()-0.5)*4000;
+      trees.push({x,y,size:TREE_SIZE});
+    }
+  }
+
+  function update(){
+    let dx=0,dy=0;
+    if(keys['w']||keys['arrowup']){dy-=1; player.dir='up';}
+    if(keys['s']||keys['arrowdown']){dy+=1; player.dir='down';}
+    if(keys['a']||keys['arrowleft']){dx-=1; player.dir='left';}
+    if(keys['d']||keys['arrowright']){dx+=1; player.dir='right';}
+
+    if(dx!==0||dy!==0){
+      if(dx!==0&&dy!==0){dx*=Math.SQRT1_2; dy*=Math.SQRT1_2;}
+      player.x += dx*player.speed;
+      player.y += dy*player.speed;
+      player.animTime += 0.15;
+      player.frame = Math.floor(player.animTime)%FRAMES_PER_DIR;
+    } else {
+      player.animTime = 0;
+      player.frame = 0;
+    }
+
+    if(darknessDelay > 0){
+      darknessDelay--;
+    } else {
+      let moveDist = Math.sqrt(dx*dx + dy*dy) * player.speed;
+      if(moveDist>0){ darkness += moveDist*0.0005; } 
+      else { darkness += 0.0001; }
+      darkness = Math.min(1, darkness);
+      if(darkness>=1){ window.location.href="Nowhere.html"; }
+    }
+
+    if(player.x > 200 && player.y > 200){
+      localStorage.setItem('florestaBloqueada','true');
+      window.location.href="Nowhere.html";
+    }
+  }
+
+  function drawBackground(camX,camY,vw,vh){
+    const img = ASSETS.bg;
+    if(img){
+      const iw=img.width, ih=img.height;
+      const startX = -(camX % iw);
+      const startY = -(camY % ih);
+      for(let y=startY;y<vh;y+=ih){
+        for(let x=startX;x<vw;x+=iw){
+          ctx.drawImage(img,x,y,iw,ih);
+        }
+      }
+    } else {
+      ctx.fillStyle='#0d2a12';
+      ctx.fillRect(0,0,vw,vh);
+    }
+  }
+
+  function draw(){
+    const vw = canvas.clientWidth;
+    const vh = canvas.clientHeight;
+    const camX = player.x+player.w/2 - vw/2;
+    const camY = player.y+player.h/2 - vh/2;
+
+    drawBackground(camX,camY,vw,vh);
+
+    const sorted = trees.slice().sort((a,b)=>a.y - b.y);
+    const playerYsort = player.y + player.h;
+    let playerDrawn = false;
+
+    ctx.save();
+    ctx.globalAlpha = 1 - darkness*0.7;
+    for(const t of sorted){
+      const sx = Math.round(t.x - camX + vw/2);
+      const sy = Math.round(t.y - camY + vh/2);
+
+      if(!playerDrawn && playerYsort < t.y){
+        drawPlayer(vw,vh);
+        playerDrawn = true;
+      }
+
+      if(ASSETS.tree){
+        ctx.drawImage(ASSETS.tree, sx - t.size/2, sy - t.size, t.size, t.size);
+      } else {
+        ctx.fillStyle='#1e6b2b';
+        ctx.beginPath();
+        ctx.arc(sx, sy, t.size/2, 0, Math.PI*2);
+        ctx.fill();
+      }
+    }
+    if(!playerDrawn) drawPlayer(vw,vh);
+    ctx.restore();
+
+    ctx.save();
+    ctx.fillStyle = 'black';
+    ctx.globalAlpha = darkness;
+    ctx.fillRect(0,0,vw,vh);
+    ctx.restore();
+  }
+
+  function drawPlayer(vw,vh){
+    const px = Math.round(vw/2 - player.w/2);
+    const py = Math.round(vh/2 - player.h/2);
+    const img = ASSETS.player[player.dir][player.frame];
+    if(img) ctx.drawImage(img, px, py, player.w, player.h);
+    else { ctx.fillStyle='#b32b2b'; ctx.fillRect(px,py,player.w,player.h);}
+  }
+
+  function loop(){ update(); draw(); requestAnimationFrame(loop); }
+
+  (async()=>{
+    await loadAssets();
+    populateTrees();
+    loop();
+  })();
+})();
+</script>
+</body>
+</html>
