@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>Erro</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <style>
+    html, body {
+      margin: 0;
+      padding: 0;
+      background: #fff;
+      font-family: Arial, sans-serif;
+      color: #222;
+      height: 100%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+      text-align: left;
+    }
+
+    .container {
+      max-width: 500px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .icon {
+      font-size: 60px;
+      user-select: none;
+    }
+
+    h1 {
+      font-size: 20px;
+      font-weight: normal;
+      margin: 0;
+    }
+
+    p {
+      font-size: 14px;
+      color: #555;
+      margin: 0;
+    }
+
+    a {
+      color: #1a73e8;
+      text-decoration: none;
+      font-size: 14px;
+    }
+
+    a:hover {
+      text-decoration: underline;
+    }
+
+    .button {
+      display: inline-block;
+      background: #1a73e8;
+      color: white;
+      padding: 8px 16px;
+      border-radius: 4px;
+      font-size: 14px;
+      margin-top: 8px;
+      cursor: pointer;
+      text-align: center;
+      width: fit-content;
+    }
+
+    .button:hover {
+      background: #185abc;
+    }
+
+    /* Link invisível na lateral direita */
+    #hidden-link {
+      position: fixed;
+      top: 0;
+      right: 0;
+      width: 60px;
+      height: 100%;
+      background: #fff;
+      color: #fff;
+      text-decoration: none;
+    }
+
+    #hidden-link:hover {
+      background: rgba(180, 0, 255, 0.05);
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="icon">📄</div>
+    <h1>Não é possível acessar esse site</h1>
+    <p>Verifique se há um erro de digitação em <strong>irisnet.sec</strong>.</p>
+    <p>Se o endereço estiver correto, <a href="#">tente executar o Diagnóstico de Rede do Windows.</a></p>
+    <p style="color:#777;">DNS_PROBE_FINISHED_NXDOMAIN</p>
+    <div class="button" onclick="window.location.reload()">Recarregar</div>
+  </div>
+
+  <a id="hidden-link" href="Find_ME.html">.</a>
+</body>
+</html>
