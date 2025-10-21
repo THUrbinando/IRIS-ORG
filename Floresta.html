@@ -29,10 +29,7 @@ canvas#gameCanvas{
 <canvas id="gameCanvas"></canvas>
 <script>
 (() => {
-  if(localStorage.getItem('florestaBloqueada') === 'true'){
-    alert('Você não pode acessar esta página.');
-    window.location.href = 'NyanChael.html';
-  }
+
 
   const canvas = document.getElementById('gameCanvas');
   const ctx = canvas.getContext('2d');
@@ -220,3 +217,4 @@ canvas#gameCanvas{
 </script>
 </body>
 </html>
+
