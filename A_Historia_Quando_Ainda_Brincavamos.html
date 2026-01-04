@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<title>A História de Quando Ainda Brincávamos</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<style>
+html, body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  background: black;
+  font-family: "Courier New", monospace;
+  overflow: hidden;
+}
+
+/* VÍDEOS DE FUNDO */
+.bgVideo {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 0;
+  transition: opacity 1.5s ease;
+  z-index: 0;
+}
+
+.bgVideo.active {
+  opacity: 1;
+}
+
+/* ESCURECER FUNDO */
+#overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.55);
+  z-index: 1;
+}
+
+/* TEXTO */
+#textBox {
+  position: absolute;
+  bottom: 15%;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 80%;
+  text-align: center;
+  color: #eaeaea;
+  font-size: 18px;
+  line-height: 1.6;
+  z-index: 2;
+  cursor: pointer;
+  min-height: 2em;
+  white-space: pre-wrap;
+}
+</style>
+</head>
+<body>
+
+<audio id="bgMusic" loop></audio>
+
+<!-- VÍDEOS -->
+<video id="video1" class="bgVideo active" autoplay muted loop playsinline>
+  <source src="lembre-se.mp4" type="video/mp4">
+</video>
+<video id="video2" class="bgVideo" autoplay muted loop playsinline>
+  <source src="lembre-se c2.mp4" type="video/mp4">
+</video>
+<video id="video3" class="bgVideo" autoplay muted loop playsinline>
+  <source src="lembre-se c3.mp4" type="video/mp4">
+</video>
+<video id="video4" class="bgVideo" autoplay muted loop playsinline>
+  <source src="lembre-se c4.mp4" type="video/mp4">
+</video>
+<video id="video5" class="bgVideo" autoplay muted loop playsinline>
+  <source src="lembre-se c5.mp4" type="video/mp4">
+</video>
+<video id="video6" class="bgVideo" autoplay muted loop playsinline>
+  <source src="lembre-se c6.mp4" type="video/mp4">
+</video>
+<video id="video7" class="bgVideo" autoplay muted loop playsinline>
+  <source src="lembre-se c7.mp4" type="video/mp4">
+</video>
+<video id="video8" class="bgVideo" autoplay muted loop playsinline>
+  <source src="lembre-se c8.mp4" type="video/mp4">
+</video>
+
+<div id="overlay"></div>
+<div id="textBox"></div>
+
+<script>
+const chapters = [
+  { video: 1, lines: [
+    "A cidade era pequena.",
+    "Pequena demais.",
+    "Daquelas onde os dias se repetem,",
+    "e a única coisa que muda é o clima.",
+    "Eu e meu irmão, Thurbi, crescemos ali.",
+    "Nossos pais estavam… por perto.",
+    "Às vezes.",
+    "Na maior parte do tempo, era só nós dois,",
+    "a casa,",
+    "e o silêncio.",
+    "Então a gente brincava.",
+    "Criávamos histórias no chão do meu quarto,",
+    "livros viravam montanhas,",
+    "cadeiras viravam castelos,",
+    "e tudo que a gente imaginava podia virar um monstro.",
+    "Em algum momento,",
+    "as histórias começaram a responder.",
+    "Não com palavras.",
+    "Só… do jeito certo.",
+    "Portas levavam a lugares que não deviam existir.",
+    "Os quartos pareciam maiores por dentro.",
+    "As regras importavam.",
+    "Se a gente dissesse que algo era real,",
+    "então era.",
+    "A gente não sabia o que eram Dark Worlds.",
+    "Pra gente,",
+    "era só brincar."
+  ]},
+  { video: 2, lines: [
+    "Eu gostava de criar personagens.",
+    "Não heróis.",
+    "Heróis sempre vão embora.",
+    "Eu gostava dos que ficavam.",
+    "Dos que perdiam.",
+    "Foi assim que o Dru nasceu.",
+    "Ele não era mau.",
+    "Também não era bom.",
+    "Ele existia pra estar ali.",
+    "Pra reagir.",
+    "Pra esperar.",
+    "Às vezes, quando a gente parava de brincar,",
+    "eu pensava nele.",
+    "No que ele faria quando ninguém estivesse olhando.",
+    "Eu ria disso.",
+    "Personagens não pensam quando você vai embora.",
+    "…né?"
+  ]},
+  { video: 3, lines: [
+    "Um dia, o Thurbi disse que não queria mais brincar.",
+    "Falou como se não fosse nada.",
+    "Como dizer que não gosta mais de um brinquedo.",
+    "Disse que já era grande demais.",
+    "Que era coisa de criança.",
+    "Eu não discuti.",
+    "Só concordei com a cabeça.",
+    "Mas da próxima vez que tentei abrir um mundo,",
+    "algo estava errado.",
+    "As regras ainda funcionavam,",
+    "mas mais devagar.",
+    "Como se o mundo estivesse hesitando.",
+    "Como se alguém estivesse faltando.",
+    "Eu continuei mesmo assim.",
+    "Até não conseguir mais."
+  ]},
+  { video: 4, lines: [
+    "A vida sem os Dark Worlds era vazia.",
+    "Escola.",
+    "Casa.",
+    "As mesmas ruas.",
+    "As mesmas árvores.",
+    "A mesma floresta,",
+    "parada na borda da cidade.",
+    "Comecei a sair com a Mavi.",
+    "Ela ria fácil.",
+    "Ia na minha onda sem fazer muitas perguntas.",
+    "Às vezes eu mostrava pequenas coisas.",
+    "Mundos menores.",
+    "Nada perigoso.",
+    "Ela achava que era imaginação.",
+    "Eu não corrigia.",
+    "Ela nunca conheceu o Dru.",
+    "Ainda bem."
+  ]},
+  { video: 5, lines: [
+    "Não aconteceu de uma vez.",
+    "Primeiro, as cores sumiam.",
+    "Tudo ficava preto e branco por um segundo.",
+    "Depois, comecei a ver lugares.",
+    "Um mundo plano.",
+    "Sem céu.",
+    "Sem chão.",
+    "Só espaço.",
+    "E alguém ali.",
+    "Parado.",
+    "Olhando pra cima.",
+    "Esperando.",
+    "Eu sabia quem era.",
+    "Eu não queria saber."
+  ]},
+  { video: 6, lines: [
+    "A floresta não ficava quieta à noite.", 
+    "Mesmo quando não havia vento,", 
+    "as folhas se mexiam.", 
+    "Eu comecei a ir lá sem perceber quando isso virou rotina.", 
+    "Primeiro era só pra andar.", 
+    "Depois, pra pensar.", 
+    "Depois, pra ouvir.", 
+    "Eu não via mais só imagens.", 
+    "Eu sentia.", 
+    "Uma pressão no peito,", 
+    "como se algo estivesse tentando respirar por mim.", 
+    "Eu via o Dru.", 
+    "Não como personagem.", 
+    "Como alguém preso.", 
+    "Parado naquele mundo sem cor,", 
+    "sem som,", 
+    "sem tempo.", 
+    "Esperando por jogadores que nunca voltariam.", 
+    "Isso me deixava doente.", 
+    "O Thurbi percebeu antes de eu perceber nele.", 
+    "Ele me esperava na sala quando voltei uma noite.", 
+    "Luz apagada.", 
+    "Tela do computador ligada.", 
+    "Meu nome aberto numa página vazia do blog.", 
+    "Ele falou primeiro.", 
+    "Disse meu nome com a voz firme demais pra alguém tão novo.", 
+    "Perguntou onde eu estava indo.", 
+    "Perguntou por que eu voltava sujo de terra.", 
+    "Perguntou por que eu falava dormindo.", 
+    "Eu tentei rir.", 
+    "Disse que ele estava imaginando coisas.", 
+    "Isso foi um erro.", 
+    "Ele se levantou.", 
+    "A voz dele começou a tremer,", 
+    "mas não de medo.", 
+    "De raiva.", 
+    "Disse que eu estava diferente.", 
+    "Que eu sumia de madrugada.", 
+    "Que eu ficava olhando pra nada,", 
+    "como se alguém estivesse atrás dele.", 
+    "Eu disse pra ele parar.", 
+    "Disse que ele não entendia.", 
+    "Ele disse que entendia mais do que eu pensava.", 
+    "Disse que aquilo não era mais brincadeira.", 
+    "Que eu estava trazendo coisas de fora pra dentro.", 
+    "Que eu precisava parar.", 
+    "Agora.", 
+    "Eu senti algo subir pela garganta.", 
+    "Um nó.", 
+    "Uma urgência.", 
+    "Eu disse que não podia.", 
+    "Disse que não era justo.", 
+    "Que alguém tinha ficado pra trás.", 
+    "Que não dava pra simplesmente fechar a porta e fingir que nada aconteceu.", 
+    "Ele gritou meu nome.", 
+    "Gritou que eu estava me machucando.", 
+    "Que eu estava se machucando.", 
+    "Que eu estava se perdendo.", 
+    "Disse que o Dru não era real.", 
+    "Que ele nunca foi.", 
+    "Que eu precisava deixar isso morrer.", 
+    "Aquilo doeu mais do que qualquer coisa.", 
+    "Eu avancei um passo.", 
+    "Ele recuou.", 
+    "Pela primeira vez.", 
+    "Minha voz saiu alta demais.", 
+    "Eu disse que ele era egoísta.", 
+    "Que ele foi embora primeiro.", 
+    "Que ele largou tudo.", 
+    "Que se alguém tinha culpa, era ele.", 
+    "O silêncio que veio depois foi pior.", 
+    "Ele me olhou como se eu fosse outra pessoa.", 
+    "Como se eu já tivesse atravessado algo invisível.", 
+    "Ele disse, baixinho,", 
+    "que tinha medo de me perder.", 
+    "Eu não respondi.", 
+    "Peguei a jaqueta.", 
+    "E fui embora."
+  ]},
+  { video: 7, lines: [
+    "A floresta estava diferente naquela noite.", 
+    "Mais escura.", 
+    "Mais próxima.", 
+    "Cada passo parecia ecoar de um jeito errado.", 
+    "As cores começaram a sumir assim que passei da trilha.", 
+    "Preto.", 
+    "Branco.", 
+    "Cinza.", 
+    "Eu ouvi vozes.", 
+    "Não palavras.", 
+    "Intenção.", 
+    "Era como se o mundo estivesse me reconhecendo.", 
+    "Eu pensei no Thurbi.", 
+    "No jeito que ele me olhou.", 
+    "No medo.", 
+    "Na decepção.", 
+    "Naquele mundo sem cor,", 
+    "eu vi o Dru mais perto do que nunca.",
+    "Ele não se mexia.", 
+    "Mas eu senti.", 
+    "Ele estava esperando por mim.", 
+    "Por alguém.", 
+    "Eu dei mais um passo.", 
+    "Depois outro.", 
+    "O chão desapareceu sem aviso.", 
+    "Não houve queda.", 
+    "Só silêncio.", 
+    "No dia seguinte,", 
+    "o Thurbi acordou sozinho.", 
+    "Minha cama estava arrumada.", 
+    "Meu quarto intacto.", 
+    "O blog aberto.", 
+    "A última coisa que eu escrevi ainda piscava na tela.", 
+    "A floresta não devolveu nada."
+  ]},
+  { video: 8, lines: [
+    "1 de outubro de 1995.",
+    "",
+    "Ele não voltou.",
+    "",
+    "Michael.",
+    "",
+    "Meu irmão.",
+    "",
+    "...",
+    "",
+    "A floresta continua lá.",
+    "",
+    "Eu não sei mais o que a gente fez.",
+    "",
+    "Eu não sei mais onde ele foi.",
+    "",
+    "...",
+    "",
+    "Fim."
+  ]}
+];
+
+let chapterIndex = 0;
+let lineIndex = 0;
+let charIndex = 0;
+let typing = false;
+let started = false;
+let interval = null;
+let musicSwitched = false;
+
+const box = document.getElementById("textBox");
+const music = document.getElementById("bgMusic");
+
+const videos = {
+  1: video1,
+  2: video2,
+  3: video3,
+  4: video4,
+  5: video5,
+  6: video6,
+  7: video7,
+  8: video8
+};
+
+function switchVideo(id) {
+  Object.values(videos).forEach(v => v.classList.remove("active"));
+  videos[id]?.classList.add("active");
+}
+
+function startTyping(text) {
+  box.textContent = "";
+  charIndex = 0;
+  typing = true;
+
+  interval = setInterval(() => {
+    if (charIndex < text.length) {
+      box.textContent += text.charAt(charIndex++);
+    } else {
+      clearInterval(interval);
+      typing = false;
+    }
+  }, 30);
+}
+
+document.addEventListener("click", () => {
+  if (!started) {
+    music.src = "A Story.mp3";
+    music.play().catch(() => {});
+    started = true;
+  }
+
+  if (typing) {
+    clearInterval(interval);
+    box.textContent = chapters[chapterIndex].lines[lineIndex - 1];
+    typing = false;
+    return;
+  }
+
+  const chapter = chapters[chapterIndex];
+
+  if (lineIndex >= chapter.lines.length) {
+    if (chapterIndex < chapters.length - 1) {
+      chapterIndex++;
+      lineIndex = 0;
+      box.textContent = "";
+      switchVideo(chapters[chapterIndex].video);
+
+      // troca de música APENAS no capítulo 8
+      if (chapterIndex === 7 && !musicSwitched) {
+        musicSwitched = true;
+        music.pause();
+        music.src = "A Story.mp3";
+        music.load();
+        music.play().catch(() => {});
+      }
+    }
+    return;
+  }
+
+  startTyping(chapter.lines[lineIndex++]);
+});
+</script>
+
+</body>
+</html>
