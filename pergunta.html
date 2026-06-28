@@ -5,7 +5,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>O que foi necessário para satisfazê-lo?</title>
+<title>Excelente</title>
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -21,124 +21,27 @@
 }
 
 html,body{
-
     width:100%;
     height:100%;
-
-    background:#000;
-
     overflow:hidden;
-
-    font-family:'8bitOperatorPlus-Bold', monospace;
-
-    color:white;
-
 }
 
-.question{
-
-    position:absolute;
-
-    top:20px;
-    left:20px;
-
-    font-size:14px;
-    font-weight:normal;
-
-    user-select:text;
-
-    /* Define a fonte pixelada importada */
-    font-family: 'Press Start 2P', monospace;
-    
-    /* Define a cor do texto como preta */
-    color: #070707;
-
-   
-}
-
-.container{
-
-    width:100%;
-    height:100%;
+body{
+    background:url("profundezas.png") no-repeat center center fixed;
+    background-size:cover;
 
     display:flex;
     justify-content:center;
     align-items:center;
 
-}
-
-form{
-
-    display:flex;
-    flex-direction:column;
-    align-items:center;
-
-    gap:10px;
-
-}
-
-input{
-
-    width:25px;
-    height:26px;
-
-    background:#3e485e;
-
-    border:1px solid #73809d;
-
-    color:white;
-
-    text-align:center;
-
-    outline:none;
-
     font-family:'Press Start 2P', monospace;
-
-    font-size:8px;
-
-    overflow:hidden;
-
-    white-space:nowrap;
-
-    text-overflow:clip;
-
 }
 
-input::placeholder{
-
-    color:#d0d0d0;
-
-}
-
-button{
-
-    width:42px;
-    height:26px;
-
-    background:#6b758b;
-
-    border:1px solid #8d96a8;
-
-    cursor:pointer;
-
-}
-
-button:hover{
-
-    filter:brightness(1.1);
-
-}
-
-#erro{
-
-    height:12px;
-
-    color:#ffffff;
-
-    font-size:8px;
-
+.message{
+    color:white;
+    font-size:22px;
+    text-align:center;
     user-select:none;
-
 }
 
 </style>
@@ -146,76 +49,9 @@ button:hover{
 </head>
 <body>
 
-<div class="question">
-responda. a. pergunta. você tem um numero de chances limitado.
+<div class="message">
+EXCELENTE
 </div>
-
-<div class="container">
-
-<form id="argForm"
-action="https://formsubmit.co/thurbi08@gmail.com"
-method="POST">
-
-<input
-id="email"
-type="text"
-name="email"
-autocomplete="off"
-spellcheck="false"
-maxlength="40">
-
-<div id="erro"></div>
-
-<input
-id="answer"
-type="text"
-name="resposta"
-autocomplete="off"
-spellcheck="false"
-maxlength="120">
-
-<button type="submit"></button>
-
-<input type="hidden" name="_captcha" value="false">
-<input type="hidden" name="_subject" value="Nova resposta do ARG">
-<input type="hidden" name="_template" value="table">
-
-<input type="hidden" name="_next" value="index.html">
-
-</form>
-
-</div>
-
-<script>
-
-const form = document.getElementById("argForm");
-const email = document.getElementById("email");
-const erro = document.getElementById("erro");
-
-form.addEventListener("submit",(e)=>{
-
-    const regex=/^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-
-    if(!regex.test(email.value.trim())){
-
-        e.preventDefault();
-
-        erro.textContent="DESCONHECIDO";
-
-        email.style.borderColor="#b53c3c";
-
-        setTimeout(()=>{
-
-            erro.textContent="";
-            email.style.borderColor="#73809d";
-
-        },2000);
-
-    }
-
-});
-
-</script>
 
 </body>
 </html>
